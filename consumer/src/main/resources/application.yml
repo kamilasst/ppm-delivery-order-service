@@ -1,0 +1,13 @@
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+app:
+  rabbitmq:
+    domain: order
+    country: br
+    action-create: create
+    exchange-command: ${app.rabbitmq.domain}.command.exchange
