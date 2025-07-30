@@ -6,8 +6,16 @@ spring:
     password: guest
 
 app:
+  supportedCountries:
+    - AR
+    - BR
+    - CO
+    - MX
+    - PY
+    - US
+
+message:
   rabbitmq:
     domain: order
-    country: br
-    action-create: create
-    exchange-command: ${app.rabbitmq.domain}.command.exchange
+    actions: create, update
+    exchange: order.command.exchange
