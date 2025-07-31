@@ -13,7 +13,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 @EnableRabbit
@@ -21,6 +23,7 @@ public class RabbitConfig {
 
     private final SupportedCountries supportedCountries;
     private final MessageProperties messageProperties;
+    private final Map<String, String> queueNameRoutingKeyMap = new HashMap<>();
 
     public RabbitConfig(SupportedCountries supportedCountries, MessageProperties messageProperties){
         this.supportedCountries = supportedCountries;
@@ -39,7 +42,10 @@ public class RabbitConfig {
         String domain = messageProperties.getDomain();
         for(String country : supportedCountries.getSupportedCountries()) {
             for (String action :  messageProperties.getActions()) {
-                countryQueues.add(new Queue(country.toLowerCase() + "." + domain + "." + action, true));
+                String queueName = country.toLowerCase() + "." + domain + "." + action;
+                countryQueues.add(new Queue(queueName, true));
+                String routingKey = country.toLowerCase() + "." + action;
+                queueNameRoutingKeyMap.put(queueName, routingKey);
             }
         }
         return countryQueues;
@@ -56,12 +62,8 @@ public class RabbitConfig {
     public List<Binding> createBindings(TopicExchange commandExchange, List<Queue> countryQueues) {
         List<Binding> bindings = new ArrayList<>();
         for (Queue queue : countryQueues) {
-            String country = queue.getName().split("\\.")[0];
-
-            for (String action :  messageProperties.getActions()) {
-                String routingKey = country + "." + action;
-                bindings.add(BindingBuilder.bind(queue).to(commandExchange).with(routingKey));
-            }
+            String routingKey = queueNameRoutingKeyMap.get(queue.getName());
+            bindings.add(BindingBuilder.bind(queue).to(commandExchange).with(routingKey));
         }
         return bindings;
     }

@@ -17,13 +17,14 @@
     <packaging>pom</packaging>
     <modules>
         <module>consumer</module>
+        <module>producer</module>
     </modules>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
+        <lombok.version>1.18.34</lombok.version>
     </properties>
 
     <dependencies>
