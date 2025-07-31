@@ -1,4 +1,4 @@
-package com.ppm.delivery.order.consumer;
+package com.ppm.delivery.order.consumer.message.listener;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.handler.annotation.Header;
