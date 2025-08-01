@@ -25,6 +25,8 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <lombok.version>1.18.34</lombok.version>
+        <junit.jupiter.version>5.10.0</junit.jupiter.version>
+        <mockito.jupiter.version>5.3.1</mockito.jupiter.version>
     </properties>
 
     <dependencies>
@@ -37,6 +39,20 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.jupiter.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
