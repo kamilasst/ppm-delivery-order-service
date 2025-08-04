@@ -1,10 +1,8 @@
 package com.ppm.delivery.order.producer.api.domain.request.header;
 
-import java.time.Instant;
-
 public record Header(
         String correlationId,
-        Instant timestamp,
+        String timestamp,
         String source,
         String authorization,
         String type,
