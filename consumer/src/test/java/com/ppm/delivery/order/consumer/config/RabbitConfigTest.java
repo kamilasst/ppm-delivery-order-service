@@ -90,15 +90,15 @@ public class RabbitConfigTest {
 
         //Act
         List<Queue> queues = rabbitConfig.countryQueues();
-        List<String> queueNames = rabbitConfig.queueNames(queues);
+        List<String> queueNames = rabbitConfig.queueNames();
 
         //Assert
         assertEquals(1, queueNames.size());
         assertEquals("br.order.create", queueNames.get(0));
 
-        verify(supportedCountries).getSupportedCountries();
-        verify(messageProperties).getDomain();
-        verify(messageProperties).getActions();
+        verify(supportedCountries, times(2)).getSupportedCountries();
+        verify(messageProperties, times(2)).getDomain();
+        verify(messageProperties, times(2)).getActions();
         verifyNoMoreInteractions(messageProperties, supportedCountries);
     }
 
@@ -159,16 +159,16 @@ public class RabbitConfigTest {
         //Assert
         assertTrue(queues.isEmpty());
 
-        List<String> names = rabbitConfig.queueNames(queues);
+        List<String> names = rabbitConfig.queueNames();
         assertTrue(names.isEmpty());
 
         TopicExchange exchange = rabbitConfig.commandExchange();
         List<Binding> bindings = rabbitConfig.createBindings(exchange, queues);
         assertTrue(bindings.isEmpty());
 
-        verify(supportedCountries).getSupportedCountries();
-        verify(messageProperties).getDomain();
-        verify(messageProperties).getActions();
+        verify(supportedCountries, times(2)).getSupportedCountries();
+        verify(messageProperties, times(2)).getDomain();
+        verify(messageProperties, times(2)).getActions();
         verify(messageProperties).getExchange();
         verifyNoMoreInteractions(supportedCountries, messageProperties);
     }
@@ -186,15 +186,15 @@ public class RabbitConfigTest {
         //Assert
         assertTrue(queues.isEmpty());
 
-        List<String> names = rabbitConfig.queueNames(queues);
+        List<String> names = rabbitConfig.queueNames();
         assertTrue(names.isEmpty());
 
         TopicExchange exchange = rabbitConfig.commandExchange();
         List<Binding> bindings = rabbitConfig.createBindings(exchange, queues);
         assertTrue(bindings.isEmpty());
 
-        verify(supportedCountries).getSupportedCountries();
-        verify(messageProperties).getDomain();
+        verify(supportedCountries, times(2)).getSupportedCountries();
+        verify(messageProperties, times(2)).getDomain();
         verify(messageProperties).getExchange();
         verifyNoMoreInteractions(messageProperties, supportedCountries);
     }

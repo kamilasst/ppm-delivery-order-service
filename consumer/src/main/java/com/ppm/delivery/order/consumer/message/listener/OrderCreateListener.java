@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrderCreateListener {
 
-    @RabbitListener(queues = "#{rabbitConfig.queueNames()}")
+    @RabbitListener(queues = "#{@rabbitConfig.queueNames()}")
     public void receiveMessage(@Header("amqp_receivedRoutingKey") String routingKey,
                                String message) {
 
