@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @Component
 @ConfigurationProperties(prefix = "message.rabbitmq")
-public class MessageProperties {
+public class MessagePropertiesAplication {
 
     private String domain;
     private List<String> actions = new ArrayList<>();
