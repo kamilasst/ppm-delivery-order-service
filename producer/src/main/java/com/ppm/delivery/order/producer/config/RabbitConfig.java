@@ -1,6 +1,6 @@
 package com.ppm.delivery.order.producer.config;
 
-import com.ppm.delivery.order.producer.properties.MessageProperties;
+import com.ppm.delivery.order.producer.properties.MessagePropertiesAplication;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableRabbit
-@EnableConfigurationProperties(MessageProperties.class) // TODO atg - Revisao producer - Avalie se é necessário EnableConfigurationProperties
+@EnableConfigurationProperties(MessagePropertiesAplication.class) // TODO atg - Revisao producer - Avalie se é necessário EnableConfigurationProperties
 public class RabbitConfig {
 
     @Bean

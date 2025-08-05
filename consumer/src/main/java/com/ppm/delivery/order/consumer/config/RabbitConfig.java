@@ -52,8 +52,8 @@ public class RabbitConfig {
     }
 
     @Bean
-    public List<String> queueNames(List<Queue> countryQueues) {
-        return countryQueues.stream()
+    public List<String> queueNames() {
+        return countryQueues().stream()
                 .map(Queue::getName)
                 .toList();
     }
