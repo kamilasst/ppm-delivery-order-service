@@ -13,7 +13,8 @@ public class OrderService {
         this.senderMessageService = senderMessageService;
     }
 
-    // TODO atg - Revisao producer - Avalie renomear para sendCreateOrderMessage
+    // TODO atg - Revisao producer - Avalie renomear para sendCreateOrderMessage pois posterioemente teremos outros
+    // requisitos de envio de mensagens
     public void sendOrder(String message){
         senderMessageService.sendOrder(message);
     }

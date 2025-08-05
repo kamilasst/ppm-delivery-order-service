@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @Component
 @ConfigurationProperties(prefix = "app")
-public class SupportedCountries {
+public class SupportedCountriesProperties {
 
     private List<String> supportedCountries;
 }

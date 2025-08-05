@@ -8,6 +8,9 @@ import org.springframework.validation.annotation.Validated;
 import java.util.ArrayList;
 import java.util.List;
 
+
+// TODO atg - Essa classe é um @Configuration ou um Properties(Semelhante o MesssageApplicationProperties) ? qual a diferença ? qual a melhor indicacao ?
+// Se decidir que é um @Configuration, seria dentro do pacote config fora da 'api'
 @Configuration
 @ConfigurationProperties(prefix = "app")
 @Validated

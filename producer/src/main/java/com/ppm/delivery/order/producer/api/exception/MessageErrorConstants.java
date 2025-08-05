@@ -3,6 +3,9 @@ package com.ppm.delivery.order.producer.api.exception;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+
+// TODO atg - Revisao producer - Como vamos ter essa classe mais geral(e não so da api),
+//  por favor avalie mudar ela de pacote para fora da api e dentro de exception
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MessageErrorConstants {
 
