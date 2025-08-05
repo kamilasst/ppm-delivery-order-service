@@ -1,25 +1,25 @@
 package com.ppm.delivery.order.producer.api.controller;
 
-import com.ppm.delivery.order.producer.service.OrderService;
+import com.ppm.delivery.order.producer.service.IOrderService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/order")
-public class OrderProducerController {
+public class OrderProducerController implements IOrderProducerController{
 
-    private final OrderService orderService;
+    private final IOrderService orderService;
 
-    public OrderProducerController( OrderService orderService) {
+    public OrderProducerController(final IOrderService orderService) {
         this.orderService = orderService;
     }
 
-    @PostMapping("/create")
+   @Override
     public ResponseEntity<String> create(@RequestBody String message) {
-        orderService.sendOrder(message);
-        return ResponseEntity.accepted().body("Message sent");
+        orderService.sendCreateOrderMessage(message);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 }

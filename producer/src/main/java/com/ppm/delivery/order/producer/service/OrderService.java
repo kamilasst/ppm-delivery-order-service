@@ -3,16 +3,16 @@ package com.ppm.delivery.order.producer.service;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OrderService {
+public class OrderService implements IOrderService{
 
-    private final SenderMessageService senderMessageService;
+    private final ISenderMessageService senderMessageService;
 
-    public OrderService(SenderMessageService senderMessageService){
+    public OrderService(ISenderMessageService senderMessageService){
         this.senderMessageService = senderMessageService;
     }
 
-    public void sendOrder(String message){
-        senderMessageService.sendOrder(message);
+    @Override
+    public void sendCreateOrderMessage(String message){
+        senderMessageService.sendCreateOrderMessage(message);
     }
-
 }

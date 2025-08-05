@@ -1,30 +1,26 @@
-package com.ppm.delivery.order.producer.api.config;
+package com.ppm.delivery.order.producer.properties;
 
 import jakarta.validation.constraints.NotEmpty;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Configuration
+@Setter
+@Getter
+@Component
 @ConfigurationProperties(prefix = "app")
 @Validated
-public class OrderProducerConfig {
+public class ApplicationProperties {
 
     @NotEmpty(message = "Supported countries cannot be empty.")
     private List<String> supportedCountries;
 
-    public OrderProducerConfig() {
+    public ApplicationProperties() {
         supportedCountries = new ArrayList<>();
-    }
-
-    public List<String> getSupportedCountries() {
-        return supportedCountries;
-    }
-
-    public void setSupportedCountries(List<String> supportedCountries) {
-        this.supportedCountries = supportedCountries;
     }
 }
