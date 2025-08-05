@@ -1,17 +1,14 @@
-package com.ppm.delivery.order.producer.config;
+package com.ppm.delivery.order.producer.message.config;
 
-import com.ppm.delivery.order.producer.properties.MessagePropertiesAplication;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableRabbit
-@EnableConfigurationProperties(MessagePropertiesAplication.class) // TODO atg - Revisao producer - Avalie se é necessário EnableConfigurationProperties
 public class RabbitConfig {
 
     @Bean

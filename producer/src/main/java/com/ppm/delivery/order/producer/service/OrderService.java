@@ -2,21 +2,17 @@ package com.ppm.delivery.order.producer.service;
 
 import org.springframework.stereotype.Service;
 
-// TODO atg - Revisao producer - Criar interface IOrderService
 @Service
-public class OrderService {
+public class OrderService implements IOrderService{
 
-    // TODO atg - Acessar via interface
-    private final SenderMessageService senderMessageService;
+    private final ISenderMessageService senderMessageService;
 
-    public OrderService(SenderMessageService senderMessageService){
+    public OrderService(ISenderMessageService senderMessageService){
         this.senderMessageService = senderMessageService;
     }
 
-    // TODO atg - Revisao producer - Avalie renomear para sendCreateOrderMessage pois posterioemente teremos outros
-    // requisitos de envio de mensagens
-    public void sendOrder(String message){
-        senderMessageService.sendOrder(message);
+    @Override
+    public void sendCreateOrderMessage(String message){
+        senderMessageService.sendCreateOrderMessage(message);
     }
-
 }

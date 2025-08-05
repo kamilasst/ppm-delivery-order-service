@@ -1,5 +1,9 @@
 package com.ppm.delivery.order.producer.api.constants;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class HeaderConstants {
 
     public static final String HEADER_CORRELATION_ID = "correlationId";
@@ -15,5 +19,4 @@ public class HeaderConstants {
     public static final String HEADER_PLATFORM = "platform";
     public static final String HEADER_PROFILE = "profile";
 
-    private HeaderConstants() {}
 }
