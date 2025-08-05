@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableRabbit
-@EnableConfigurationProperties(MessageProperties.class)
+@EnableConfigurationProperties(MessageProperties.class) // TODO atg - Revisao producer - Avalie se é necessário EnableConfigurationProperties
 public class RabbitConfig {
 
     @Bean
