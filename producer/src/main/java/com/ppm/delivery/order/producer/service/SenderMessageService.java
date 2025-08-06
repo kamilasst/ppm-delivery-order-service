@@ -43,7 +43,7 @@ public class SenderMessageService implements ISenderMessageService{
         messageProperties.setHeader(MessageHeaderConstants.HEADER_COUNTRY, contextHolder.getCountry());
         messageProperties.setHeader(MessageHeaderConstants.HEADER_CORRELATION_ID, contextHolder.getCorrelationId());
         messageProperties.setHeader(MessageHeaderConstants.HEADER_PROFILE, contextHolder.getProfile());
-        messageProperties.setHeader(MessageHeaderConstants.HEADER_TIMESTAMP, LocalDateTime.now());
+        messageProperties.setHeader(MessageHeaderConstants.HEADER_TIMESTAMP, LocalDateTime.now().toString());
 
         Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
         return converter.toMessage(payload, messageProperties);
