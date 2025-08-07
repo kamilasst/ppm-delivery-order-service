@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrderCreateListener {
 
+    // TODO atg - Review consumer - O @Header por default é required = true, podemos remover
     @RabbitListener(queues = "#{@rabbitConfig.queueNames()}")
     public void receiveMessage(@Header("amqp_receivedRoutingKey") String routingKey,
                                @Header(value = HeaderConstants.HEADER_COUNTRY, required = true) final String country,

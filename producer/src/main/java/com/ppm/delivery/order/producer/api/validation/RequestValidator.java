@@ -60,6 +60,7 @@ public class RequestValidator {
         }
     }
 
+    // TODO atg - Review consumer - Renomear para validateTimestamp e timestamp
     private void validateTimeStamp(final String timeStamp){
 
         if (StringUtils.isBlank(timeStamp)) {

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+// TODO atg - Review consumer - No producer chamamos de ApplicationProperties, avalie padronizar
 @Getter
 @Setter
 @Component

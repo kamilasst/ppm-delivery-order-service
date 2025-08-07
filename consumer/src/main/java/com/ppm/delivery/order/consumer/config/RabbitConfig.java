@@ -35,6 +35,16 @@ public class RabbitConfig {
         return new TopicExchange(messageProperties.getExchange());
     }
 
+    // TODO atg - Revisao consumer - Quando fizemos o countryQueues e adicionamos o queueNameRoutingKeyMap, o metodo ficou
+    // com duas responsabilidades, entao a sugestao é refatorar List<Queue> countryQueues() para public Map<String, QueueInfo> queueMapInfo() {
+    // acredito que isso resolve o problema... ai teria que alterar os outros metodos para usa-lo
+//    @Getter
+//    @AllArgsConstructor
+//    public class QueueInfo {
+//
+//        private String routingKey;
+//        private Queue queue;
+//    }
     @Bean
     public List<Queue> countryQueues() {
 
