@@ -1,5 +1,6 @@
 package com.ppm.delivery.order.producer.service;
 
+import com.ppm.delivery.order.producer.api.domain.request.OrderRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,7 +13,7 @@ public class OrderService implements IOrderService{
     }
 
     @Override
-    public void sendCreateOrderMessage(String message){
-        senderMessageService.sendCreateOrderMessage(message);
+    public void sendCreateOrderMessage(OrderRequest request){
+        senderMessageService.sendCreateOrderMessage(request);
     }
 }
