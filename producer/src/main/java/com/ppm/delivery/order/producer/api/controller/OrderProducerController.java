@@ -1,6 +1,8 @@
 package com.ppm.delivery.order.producer.api.controller;
 
+import com.ppm.delivery.order.producer.api.domain.request.OrderRequest;
 import com.ppm.delivery.order.producer.service.IOrderService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,8 +20,8 @@ public class OrderProducerController implements IOrderProducerController{
     }
 
    @Override
-    public ResponseEntity<String> create(@RequestBody String message) {
-        orderService.sendCreateOrderMessage(message);
+    public ResponseEntity<String> create(@RequestBody @Valid OrderRequest request) {
+        orderService.sendCreateOrderMessage(request);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 }
