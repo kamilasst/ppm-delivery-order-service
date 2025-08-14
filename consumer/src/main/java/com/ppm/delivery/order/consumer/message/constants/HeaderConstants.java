@@ -1,4 +1,4 @@
-package com.ppm.delivery.order.consumer.api.constants;
+package com.ppm.delivery.order.consumer.message.constants;
 
 public class HeaderConstants {
 

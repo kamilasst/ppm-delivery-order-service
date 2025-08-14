@@ -1,4 +1,4 @@
-package com.ppm.delivery.order.consumer.api.domain;
+package com.ppm.delivery.order.consumer.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

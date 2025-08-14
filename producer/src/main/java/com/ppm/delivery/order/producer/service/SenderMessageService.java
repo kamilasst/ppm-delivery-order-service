@@ -2,8 +2,7 @@ package com.ppm.delivery.order.producer.service;
 
 import com.ppm.delivery.order.producer.api.constants.ActionMessageConstants;
 import com.ppm.delivery.order.producer.api.context.ContextHolder;
-import com.ppm.delivery.order.producer.api.domain.request.OrderRequest;
-import com.ppm.delivery.order.producer.message.config.MessageHeaderConstants;
+import com.ppm.delivery.order.producer.message.constants.MessageHeaderConstants;
 import com.ppm.delivery.order.producer.message.config.QueueConfig;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;

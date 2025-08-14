@@ -1,17 +1,19 @@
 package com.ppm.delivery.order.consumer.config;
 
-import com.ppm.delivery.order.consumer.properties.MessageProperties;
-import com.ppm.delivery.order.consumer.properties.SupportedCountries;
+import com.ppm.delivery.order.consumer.message.config.QueueInfo;
+import com.ppm.delivery.order.consumer.message.config.RabbitConfig;
+import com.ppm.delivery.order.consumer.properties.MessageApplicationProperties;
+import com.ppm.delivery.order.consumer.properties.ApplicationProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,22 +24,22 @@ import static org.mockito.Mockito.*;
 public class RabbitConfigTest {
 
     @Mock
-    private SupportedCountries supportedCountries;
+    private ApplicationProperties applicationProperties;
 
     @Mock
-    private MessageProperties messageProperties;
+    private MessageApplicationProperties messageApplicationProperties;
 
     private RabbitConfig rabbitConfig;
 
     @BeforeEach
     void setUp() {
-        rabbitConfig = new RabbitConfig(supportedCountries, messageProperties);
+        rabbitConfig = new RabbitConfig(applicationProperties, messageApplicationProperties);
     }
 
     @Test
     void commandExchange_shouldUseExchangeFromProperties() {
         //Arrange
-        when(messageProperties.getExchange()).thenReturn("my.exchange");
+        when(messageApplicationProperties.getExchange()).thenReturn("my.exchange");
 
         //Act
         TopicExchange exchange = rabbitConfig.commandExchange();
@@ -46,19 +48,19 @@ public class RabbitConfigTest {
         assertNotNull(exchange);
         assertEquals("my.exchange", exchange.getName());
 
-        verify(messageProperties).getExchange();
-        verifyNoMoreInteractions(messageProperties, supportedCountries);
+        verify(messageApplicationProperties).getExchange();
+        verifyNoMoreInteractions(messageApplicationProperties, applicationProperties);
     }
 
     @Test
     void countryQueues_shouldCreateQueuesForEachCountryAndAction_andPopulateNamesCorrectly() {
         //Arrange
-        when(messageProperties.getDomain()).thenReturn("order");
-        when(messageProperties.getActions()).thenReturn(List.of("create", "update"));
-        when(supportedCountries.getSupportedCountries()).thenReturn(List.of("BR", "US"));
+        when(messageApplicationProperties.getDomain()).thenReturn("order");
+        when(messageApplicationProperties.getActions()).thenReturn(List.of("create", "update"));
+        when(applicationProperties.getSupportedCountries()).thenReturn(List.of("BR", "US"));
 
         //Act
-        List<Queue> queues = rabbitConfig.countryQueues();
+        Map<String, QueueInfo> queuesInfo = rabbitConfig.queueMapInfo();
 
         //Assert
         Set<String> expectedNames = Set.of(
@@ -68,52 +70,51 @@ public class RabbitConfigTest {
                 "us.order.update"
         );
 
-        Set<String> actualNames = queues.stream()
-                .map(Queue::getName)
+        Set<String> actualNames = queuesInfo.values().stream()
+                .map(queueInfo1 -> queueInfo1.getQueue().getName())
                 .collect(Collectors.toSet());
 
         assertEquals(expectedNames, actualNames);
-        assertTrue(queues.stream().allMatch(Queue::isDurable));
+        assertTrue(queuesInfo.values().stream().allMatch(queueInfo1 -> queueInfo1.getQueue().isDurable()));
 
-        verify(supportedCountries).getSupportedCountries();
-        verify(messageProperties).getDomain();
-        verify(messageProperties, atLeastOnce()).getActions();
-        verifyNoMoreInteractions(messageProperties, supportedCountries);
+        verify(applicationProperties).getSupportedCountries();
+        verify(messageApplicationProperties).getDomain();
+        verify(messageApplicationProperties, atLeastOnce()).getActions();
+        verifyNoMoreInteractions(messageApplicationProperties, applicationProperties);
     }
 
     @Test
-    void queueNames_shouldReturnNamesDerivedFromCountryQueues() {
+    void queueNames_shouldReturnNamesDerivedFromQueueMapInfo() {
         //Arrange
-        when(messageProperties.getDomain()).thenReturn("order");
-        when(messageProperties.getActions()).thenReturn(List.of("create"));
-        when(supportedCountries.getSupportedCountries()).thenReturn(List.of("BR"));
+        when(messageApplicationProperties.getDomain()).thenReturn("order");
+        when(messageApplicationProperties.getActions()).thenReturn(List.of("create"));
+        when(applicationProperties.getSupportedCountries()).thenReturn(List.of("BR"));
 
         //Act
-        List<Queue> queues = rabbitConfig.countryQueues();
         List<String> queueNames = rabbitConfig.queueNames();
 
         //Assert
         assertEquals(1, queueNames.size());
         assertEquals("br.order.create", queueNames.get(0));
 
-        verify(supportedCountries, times(2)).getSupportedCountries();
-        verify(messageProperties, times(2)).getDomain();
-        verify(messageProperties, times(2)).getActions();
-        verifyNoMoreInteractions(messageProperties, supportedCountries);
+        verify(applicationProperties, times(1)).getSupportedCountries();
+        verify(messageApplicationProperties, times(1)).getDomain();
+        verify(messageApplicationProperties, times(1)).getActions();
+        verifyNoMoreInteractions(messageApplicationProperties, applicationProperties);
     }
 
     @Test
     void createBindings_shouldBindEachQueueWithCorrectRoutingKey() {
         //Arrange
-        when(messageProperties.getDomain()).thenReturn("order");
-        when(messageProperties.getActions()).thenReturn(List.of("create", "delete"));
-        when(supportedCountries.getSupportedCountries()).thenReturn(List.of("BR", "MX"));
-        when(messageProperties.getExchange()).thenReturn("commands");
+        when(messageApplicationProperties.getDomain()).thenReturn("order");
+        when(messageApplicationProperties.getActions()).thenReturn(List.of("create", "delete"));
+        when(applicationProperties.getSupportedCountries()).thenReturn(List.of("BR", "MX"));
+        when(messageApplicationProperties.getExchange()).thenReturn("commands");
 
         //Act
         TopicExchange exchange = rabbitConfig.commandExchange();
-        List<Queue> countryQueues = rabbitConfig.countryQueues();
-        List<Binding> bindings = rabbitConfig.createBindings(exchange, countryQueues);
+        Map<String,QueueInfo> queuesInfo = rabbitConfig.queueMapInfo();
+        List<Binding> bindings = rabbitConfig.createBindings(exchange, queuesInfo);
 
         //Assert
         Set<String> expectedRoutingKeys = Set.of(
@@ -134,69 +135,71 @@ public class RabbitConfigTest {
         Set<String> bindingDestinations = bindings.stream()
                 .map(Binding::getDestination)
                 .collect(Collectors.toSet());
-        Set<String> queueNames = countryQueues.stream().map(Queue::getName).collect(Collectors.toSet());
+        Set<String> queueNames = queuesInfo.values().stream()
+                .map(queueInfo -> queueInfo.getQueue().getName())
+                .collect(Collectors.toSet());
         assertEquals(queueNames, bindingDestinations);
 
-        verify(supportedCountries).getSupportedCountries();
-        verify(messageProperties).getDomain();
-        verify(messageProperties, atLeastOnce()).getActions();
-        verify(messageProperties).getExchange();
-        verifyNoMoreInteractions(messageProperties, supportedCountries);
+        verify(applicationProperties).getSupportedCountries();
+        verify(messageApplicationProperties).getDomain();
+        verify(messageApplicationProperties, atLeastOnce()).getActions();
+        verify(messageApplicationProperties).getExchange();
+        verifyNoMoreInteractions(messageApplicationProperties, applicationProperties);
 
     }
 
     @Test
     void whenNoActions_butHasSupportedCountries_thenNoQueuesOrBindingsCreated() {
         //Arrange
-        when(messageProperties.getDomain()).thenReturn("order");
-        when(messageProperties.getActions()).thenReturn(List.of());
-        when(supportedCountries.getSupportedCountries()).thenReturn(List.of("BR"));
-        when(messageProperties.getExchange()).thenReturn("cmd");
+        when(messageApplicationProperties.getDomain()).thenReturn("order");
+        when(messageApplicationProperties.getActions()).thenReturn(List.of());
+        when(applicationProperties.getSupportedCountries()).thenReturn(List.of("BR"));
+        when(messageApplicationProperties.getExchange()).thenReturn("cmd");
 
         //Act
-        List<Queue> queues = rabbitConfig.countryQueues();
+        Map<String,QueueInfo> queueInfo = rabbitConfig.queueMapInfo();
 
         //Assert
-        assertTrue(queues.isEmpty());
+        assertTrue(queueInfo.isEmpty());
 
         List<String> names = rabbitConfig.queueNames();
         assertTrue(names.isEmpty());
 
         TopicExchange exchange = rabbitConfig.commandExchange();
-        List<Binding> bindings = rabbitConfig.createBindings(exchange, queues);
+        List<Binding> bindings = rabbitConfig.createBindings(exchange, queueInfo);
         assertTrue(bindings.isEmpty());
 
-        verify(supportedCountries, times(2)).getSupportedCountries();
-        verify(messageProperties, times(2)).getDomain();
-        verify(messageProperties, times(2)).getActions();
-        verify(messageProperties).getExchange();
-        verifyNoMoreInteractions(supportedCountries, messageProperties);
+        verify(applicationProperties, times(2)).getSupportedCountries();
+        verify(messageApplicationProperties, times(2)).getDomain();
+        verify(messageApplicationProperties, times(2)).getActions();
+        verify(messageApplicationProperties).getExchange();
+        verifyNoMoreInteractions(applicationProperties, messageApplicationProperties);
     }
 
     @Test
     void whenNoSupportedCountries_butHasActions_thenNoQueuesOrBindingsCreated() {
         //Arrange
-        when(messageProperties.getDomain()).thenReturn("order");
-        when(supportedCountries.getSupportedCountries()).thenReturn(List.of());
-        when(messageProperties.getExchange()).thenReturn("cmd");
+        when(messageApplicationProperties.getDomain()).thenReturn("order");
+        when(applicationProperties.getSupportedCountries()).thenReturn(List.of());
+        when(messageApplicationProperties.getExchange()).thenReturn("cmd");
 
         //Act
-        List<Queue> queues = rabbitConfig.countryQueues();
+        Map<String,QueueInfo> queuesInfo = rabbitConfig.queueMapInfo();
 
         //Assert
-        assertTrue(queues.isEmpty());
+        assertTrue(queuesInfo.isEmpty());
 
         List<String> names = rabbitConfig.queueNames();
         assertTrue(names.isEmpty());
 
         TopicExchange exchange = rabbitConfig.commandExchange();
-        List<Binding> bindings = rabbitConfig.createBindings(exchange, queues);
+        List<Binding> bindings = rabbitConfig.createBindings(exchange, queuesInfo);
         assertTrue(bindings.isEmpty());
 
-        verify(supportedCountries, times(2)).getSupportedCountries();
-        verify(messageProperties, times(2)).getDomain();
-        verify(messageProperties).getExchange();
-        verifyNoMoreInteractions(messageProperties, supportedCountries);
+        verify(applicationProperties, times(2)).getSupportedCountries();
+        verify(messageApplicationProperties, times(2)).getDomain();
+        verify(messageApplicationProperties).getExchange();
+        verifyNoMoreInteractions(messageApplicationProperties, applicationProperties);
     }
 
 }

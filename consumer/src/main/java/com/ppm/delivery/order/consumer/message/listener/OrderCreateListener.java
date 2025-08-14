@@ -1,8 +1,7 @@
 package com.ppm.delivery.order.consumer.message.listener;
 
-import com.ppm.delivery.order.consumer.api.constants.HeaderConstants;
-import com.ppm.delivery.order.consumer.api.context.MessageContextHolder;
-import com.ppm.delivery.order.consumer.api.domain.Context;
+import com.ppm.delivery.order.consumer.message.constants.HeaderConstants;
+import com.ppm.delivery.order.consumer.context.ContextHolder;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -11,14 +10,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrderCreateListener {
 
+    private final ContextHolder contextHolder;
+
+    public OrderCreateListener(ContextHolder contextHolder) {
+        this.contextHolder = contextHolder;
+    }
+
     @RabbitListener(queues = "#{@rabbitConfig.queueNames()}")
     public void receiveMessage(@Header("amqp_receivedRoutingKey") String routingKey,
-                               @Header(value = HeaderConstants.HEADER_COUNTRY, required = true) final String country,
-                               @Header(value = HeaderConstants.HEADER_CORRELATION_ID, required = true) final String correlationId,
-                               @Header(value = HeaderConstants.HEADER_X_TIMESTAMP, required = true) final Long timestamp,
+                               @Header(value = HeaderConstants.HEADER_COUNTRY) final String country,
+                               @Header(value = HeaderConstants.HEADER_CORRELATION_ID) final String correlationId,
+                               @Header(value = HeaderConstants.HEADER_X_TIMESTAMP) final Long timestamp,
                                @Payload final String message) {
 
-        MessageContextHolder.setContext(new Context(country, correlationId, timestamp));
+        contextHolder.initializeContextValues(country, correlationId, timestamp);
 
         try {
             System.out.println("Routing key: " + routingKey);
@@ -28,7 +33,7 @@ public class OrderCreateListener {
             System.out.println("Mensagem: " + message);
 
         } finally {
-            MessageContextHolder.clear();
+            contextHolder.clear();
         }
     }
 
