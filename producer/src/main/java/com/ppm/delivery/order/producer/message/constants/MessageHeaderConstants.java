@@ -1,4 +1,4 @@
-package com.ppm.delivery.order.producer.message.config;
+package com.ppm.delivery.order.producer.message.constants;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

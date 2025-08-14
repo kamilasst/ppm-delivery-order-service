@@ -25,7 +25,7 @@ public class RequestValidator {
         validateCountry(header.metadata().country());
         validateCorrelationId(header.correlationId());
         validateProfile(header.metadata().profile());
-        validateTimeStamp(header.timestamp());
+        validateTimestamp(header.timestamp());
     }
 
     private void validateCountry(final String country){
@@ -60,11 +60,10 @@ public class RequestValidator {
         }
     }
 
-    // TODO atg - Review consumer - Renomear para validateTimestamp e timestamp
-    private void validateTimeStamp(final String timeStamp){
+    private void validateTimestamp(final String timestamp){
 
-        if (StringUtils.isBlank(timeStamp)) {
-            throw new HeaderValidationException(MessageErrorConstants.ERROR_TIME_STAMP_REQUIRED_HEADER);
+        if (StringUtils.isBlank(timestamp)) {
+            throw new HeaderValidationException(MessageErrorConstants.ERROR_TIMESTAMP_REQUIRED_HEADER);
         }
     }
 }
