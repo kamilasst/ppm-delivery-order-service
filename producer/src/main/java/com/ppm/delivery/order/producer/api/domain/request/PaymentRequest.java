@@ -19,13 +19,13 @@ import java.util.List;
 @AllArgsConstructor
 public class PaymentRequest {
 
-    @NotBlank
+    @NotNull
     private PaymentMethod method;
 
     @NotNull
     private BigDecimal discount;
 
-    @NotBlank
+    @NotNull
     private DiscountType discountType;
 
     @NotNull

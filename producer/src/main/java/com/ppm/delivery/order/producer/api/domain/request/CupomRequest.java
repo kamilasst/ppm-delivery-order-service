@@ -22,6 +22,6 @@ public class CupomRequest {
     @NotNull
     private BigDecimal discount;
 
-    @NotBlank
+    @NotNull
     private DiscountType discountType;
 }

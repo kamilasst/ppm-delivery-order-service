@@ -19,7 +19,7 @@ public class PriceRequest {
     @NotBlank
     private String id;
 
-    @NotBlank
+    @NotNull
     private PriceType type;
 
     @NotNull

@@ -1,6 +1,7 @@
 package com.ppm.delivery.order.producer.api.domain.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,9 +13,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class GeoCoordinatesRequest {
 
-    @NotBlank
+    @NotNull
     private Double latitude;
 
-    @NotBlank
+    @NotNull
     private Double longitude;
 }

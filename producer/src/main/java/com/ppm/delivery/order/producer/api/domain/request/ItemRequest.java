@@ -24,7 +24,7 @@ public class ItemRequest {
     @NotBlank
     private String sku;
 
-    @NotBlank
+    @NotNull
     private ItemCategory category;
 
     @NotBlank
@@ -36,7 +36,7 @@ public class ItemRequest {
     @NotNull
     private Boolean alcoholic;
 
-    @NotBlank
+    @NotNull
     private ItemTemperature temperature;
 
     @NotNull

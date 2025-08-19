@@ -1,0 +1,43 @@
+ame: CI Consumer
+
+on:
+  pull_request:
+    paths:
+      - 'consumer/**'
+
+jobs:
+  build-producer:
+    runs-on: ubuntu-latest
+
+    services:
+      rabbitmq:
+        image: rabbitmq:3-management
+        ports:
+          - 5672:5672
+          - 15672:15672
+        options: >-
+          --health-cmd="rabbitmq-diagnostics -q ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout do repositorio
+        uses: actions/checkout@v4 # Acao para baixar o codigo do seu repositorio
+
+      - name: Configurar JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache de pacotes Maven
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository # Caminho onde o Maven armazena as dependencias baixadas
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }} # Chave de cache baseada no SO e no hash do pom.xml
+          restore-keys: | # Chaves de restauraccao alternativas
+            ${{ runner.os }}-maven-
+
+      - name: Rodar testes unitarios com Maven
+        run: mvn -B test

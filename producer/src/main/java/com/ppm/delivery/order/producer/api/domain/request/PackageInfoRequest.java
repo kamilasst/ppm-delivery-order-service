@@ -17,7 +17,7 @@ public class PackageInfoRequest {
     @NotNull
     private Integer itemCount;
 
-    @NotBlank
+    @NotNull
     private PackageType type;
 
     @NotBlank
