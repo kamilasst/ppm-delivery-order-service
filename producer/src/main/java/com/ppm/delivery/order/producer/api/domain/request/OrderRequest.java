@@ -24,7 +24,7 @@ public class OrderRequest {
     @NotNull
     private LocalDateTime createDate;
 
-    @NotBlank
+    @NotNull
     private Status status;
 
     @NotNull
