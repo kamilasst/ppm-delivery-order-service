@@ -1,4 +1,4 @@
-ame: CI Consumer
+name: CI Consumer
 
 on:
   pull_request:
