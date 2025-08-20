@@ -22,16 +22,16 @@ jobs:
           --health-retries=5
 
     steps:
-      - name: Checkout do repositorio
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Configurar JDK 17
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Cache de pacotes Maven
+      - name: Maven dependency cache
         uses: actions/cache@v4
         with:
           path: ~/.m2/repository
@@ -39,6 +39,45 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Rodar testes unitarios com Maven
+      - name: Build project
+        run: mvn clean install -DskipTests
+
+      - name: Run unit tests
         run: mvn -B test
+
+      - name: Validate Spring Boot startup
+        run: |
+          # Start Spring Boot in background and redirect logs to file
+          mvn spring-boot:run > spring-boot.log 2>&1 &
+          SPRING_PID=$!
+          echo "Waiting for Spring Boot to start..."
+
+          # Wait until port 8080 is open (max 30 seconds)
+          for i in {1..30}; do
+            if nc -z localhost 8080; then
+              echo "Spring Boot is up!"
+              break
+            fi
+            sleep 1
+          done
+
+          # If port 8080 is not open after 30 seconds, show logs and fail the job
+          if ! nc -z localhost 8080; then
+            echo -e "\e[31mSpring Boot failed to start in 30 seconds\e[0m"
+            echo "==== Spring Boot logs ===="
+            # Highlight errors in red, warnings in yellow
+            sed -e 's/.*ERROR.*/\x1b[31m&\x1b[0m/' \
+                -e 's/.*WARN.*/\x1b[33m&\x1b[0m/' spring-boot.log
+            kill $SPRING_PID
+            exit 1
+          fi
+
+          # Display logs even if startup succeeded, with colors
+          echo "==== Spring Boot logs ===="
+          sed -e 's/.*ERROR.*/\x1b[31m&\x1b[0m/' \
+              -e 's/.*WARN.*/\x1b[33m&\x1b[0m/' spring-boot.log
+
+          # Kill the Spring Boot process
+          kill $SPRING_PID
+        shell: bash
 
