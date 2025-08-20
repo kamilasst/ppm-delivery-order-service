@@ -31,6 +31,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.ppm.delivery.order.producer.PpmDeliveryOrderProducerApplication</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>

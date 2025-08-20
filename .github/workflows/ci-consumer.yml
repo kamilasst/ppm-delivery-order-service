@@ -48,7 +48,7 @@ jobs:
       - name: Validate Spring Boot startup
         run: |
           # Start Spring Boot in background and redirect logs to file
-          mvn spring-boot:run > spring-boot.log 2>&1 &
+          mvn spring-boot:run -Dspring-boot.run.main-class=com.ppm.delivery.order.consumer.PpmDeliveryOrderConsumerApplication  > spring-boot.log 2>&1 &
           SPRING_PID=$!
           echo "Waiting for Spring Boot to start..."
 
