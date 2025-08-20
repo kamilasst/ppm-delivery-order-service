@@ -1,4 +1,4 @@
-name: CI Producer
+name: CI Consumer
 
 on:
   pull_request:
