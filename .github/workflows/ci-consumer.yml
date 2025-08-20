@@ -47,6 +47,18 @@ jobs:
 
       - name: Validate Spring Boot startup
         run: |
+        # Name of the RabbitMQ container created by GitHub Actions
+          RABBIT_CONTAINER=$(docker ps --filter "ancestor=rabbitmq:3-management" --format "{{.ID}}")
+      
+          echo "Waiting for RabbitMQ to start..."
+          for i in {1..30}; do
+          if docker exec $RABBIT_CONTAINER rabbitmq-diagnostics -q ping; then
+          echo "RabbitMQ is ready!"
+          break
+          fi
+          sleep 1
+          done
+          
           # Start Spring Boot in background and redirect logs to file
           mvn spring-boot:run -Dspring-boot.run.main-class=com.ppm.delivery.order.consumer.PpmDeliveryOrderConsumerApplication  > spring-boot.log 2>&1 &
           SPRING_PID=$!
