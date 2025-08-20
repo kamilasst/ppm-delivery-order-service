@@ -2,8 +2,8 @@ name: CI Producer
 
 on:
   pull_request:
-    paths:
-      - 'producer/**'
+    branches:
+      - main
 
 jobs:
   build-producer:

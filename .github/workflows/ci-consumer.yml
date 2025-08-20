@@ -2,11 +2,11 @@ name: CI Consumer
 
 on:
   pull_request:
-    paths:
-      - 'consumer/**'
+    branches:
+      - main
 
 jobs:
-  build-producer:
+  build-consumer:
     runs-on: ubuntu-latest
 
     services:
