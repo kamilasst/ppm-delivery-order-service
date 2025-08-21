@@ -47,24 +47,25 @@ jobs:
 
       - name: Validate Spring Boot startup
         run: |
+          set -e
+
           # Name of the RabbitMQ container created by GitHub Actions
           RABBIT_CONTAINER=$(docker ps --filter "ancestor=rabbitmq:3-management" --format "{{.ID}}")
-          
+
           echo "Waiting for RabbitMQ to start..."
           for i in {1..30}; do
-            if docker exec $RABBIT_CONTAINER rabbitmq-diagnostics -q ping; then
+            if docker exec $RABBIT_CONTAINER rabbitmq-diagnostics -q ping >/dev/null 2>&1 || true; then
               echo "RabbitMQ is ready!"
               break
             fi
-            sleep 1
+            sleep 5
           done
-          
-          # Start Spring Boot in background and redirect logs to file
+
+          echo "Starting Spring Boot Consumer..."
           mvn spring-boot:run -Dspring-boot.run.main-class=com.ppm.delivery.order.consumer.PpmDeliveryOrderConsumerApplication > spring-boot.log 2>&1 &
           SPRING_PID=$!
-          echo "Waiting for Spring Boot to start..."
-          
-          # Wait until port 8080 is open (max 30 seconds)
+
+          echo "Waiting for Spring Boot to open port 8080..."
           for i in {1..30}; do
             if nc -z localhost 8080; then
               echo "Spring Boot is up!"
@@ -72,23 +73,17 @@ jobs:
             fi
             sleep 1
           done
-          
-          # If port 8080 is not open after 30 seconds, show logs and fail the job
+
           if ! nc -z localhost 8080; then
             echo -e "\e[31mSpring Boot failed to start in 30 seconds\e[0m"
             echo "===== Spring Boot logs ====="
-            # Highlight errors in red, warnings in yellow
-            sed -e 's/.*ERROR.*/\x1b[31m&\x1b[0m/' \
-                -e 's/.*WARN.*/\x1b[33m&\x1b[0m/' spring-boot.log
+            grep -E "ERROR|WARN" spring-boot.log || cat spring-boot.log
             kill $SPRING_PID
             exit 1
           fi
-          
-          # Display logs even if startup succeeded, with colors
+
           echo "===== Spring Boot logs ====="
-          sed -e 's/.*ERROR.*/\x1b[31m&\x1b[0m/' \
-              -e 's/.*WARN.*/\x1b[33m&\x1b[0m/' spring-boot.log
-          
-          # Kill the Spring Boot process
+          grep -E "ERROR|WARN" spring-boot.log || cat spring-boot.log
+
           kill $SPRING_PID
         shell: bash
