@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: maven:3.9.3-eclipse-temurin-17
-      options: --network host
 
     services:
       rabbitmq:
@@ -41,7 +40,6 @@ jobs:
 
       - name: Validate Spring Boot startup
         run: |
-          set -e
           echo "Waiting for RabbitMQ to be ready..."
           for i in {1..30}; do
             if docker exec $(docker ps --filter "ancestor=rabbitmq:3-management" --format "{{.ID}}") rabbitmq-diagnostics -q ping >/dev/null 2>&1 || true; then
@@ -65,15 +63,12 @@ jobs:
           done
 
           if ! nc -z localhost 8080; then
-            echo -e "\e[31mSpring Boot failed to start in 30 seconds\e[0m"
-            echo "===== Spring Boot logs ====="
-            grep -E "ERROR|WARN" spring-boot.log || cat spring-boot.log
+            echo "Spring Boot failed to start in 30 seconds"
+            cat spring-boot.log
             kill $SPRING_PID || true
             exit 1
           fi
 
-          echo "===== Spring Boot logs ====="
-          grep -E "ERROR|WARN" spring-boot.log || cat spring-boot.log
           kill $SPRING_PID || true
         shell: bash
 
