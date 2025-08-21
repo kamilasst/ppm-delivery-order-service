@@ -60,21 +60,21 @@ jobs:
           done
           
           # Start Spring Boot in background and redirect logs to file
-          mvn spring-boot:run -Dspring-boot.run.main-class=com.ppm.delivery.order.consumer.PpmDeliveryOrderConsumerApplication > spring-boot.log 2>&1 &
+          mvn spring-boot:run > spring-boot.log 2>&1 &
           SPRING_PID=$!
           echo "Waiting for Spring Boot to start..."
           
-          # Wait until port 8080 is open (max 30 seconds)
+          # Wait until port 8082 is open (max 30 seconds)
           for i in {1..30}; do
-            if nc -z localhost 8080; then
+            if nc -z localhost 8082; then
               echo "Spring Boot is up!"
               break
             fi
             sleep 1
           done
           
-          # If port 8080 is not open after 30 seconds, show logs and fail the job
-          if ! nc -z localhost 8080; then
+          # If port 8082 is not open after 30 seconds, show logs and fail the job
+          if ! nc -z localhost 8082; then
             echo -e "\e[31mSpring Boot failed to start in 30 seconds\e[0m"
             echo "==== Spring Boot logs ===="
             # Highlight errors in red, warnings in yellow
@@ -92,3 +92,4 @@ jobs:
           # Kill the Spring Boot process
           kill $SPRING_PID
         shell: bash
+        working-directory: ./consumer
