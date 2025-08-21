@@ -8,14 +8,13 @@ on:
 jobs:
   build-consumer:
     runs-on: ubuntu-latest
-    container:
-      image: maven:3.9.3-eclipse-temurin-17
-      env:
-        RABBITMQ_HOST: rabbitmq
 
     services:
       rabbitmq:
         image: rabbitmq:3-management
+        ports:
+          - 5672:5672
+          - 15672:15672
         options: >-
           --health-cmd="rabbitmq-diagnostics -q ping"
           --health-interval=10s
@@ -24,23 +23,72 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4 # Acao para baixar o codigo do seu repositorio
 
-      - name: Set up Maven cache
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Maven dependency cache
         uses: actions/cache@v4
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
+          path: ~/.m2/repository # Caminho onde o Maven armazena as dependencias baixadas
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }} # Chave de cache baseada no SO e no hash do pom.xml
+          restore-keys: | # Chaves de restauraccao alternativas
             ${{ runner.os }}-maven-
 
       - name: Build project
-        run: mvn clean install -DskipTests -f consumer/pom.xml
+        run: mvn clean install -DskipTests
 
       - name: Run unit tests
-        run: mvn test -f consumer/pom.xml
+        run: mvn -B test
 
-      - name: Run Spring Boot Consumer with CI config
+      - name: Validate Spring Boot startup
         run: |
-          export RABBITMQ_HOST=rabbitmq
-          mvn spring-boot:run -Dspring-boot.run.profiles=ci -Dspring-boot.run.main-class=com.ppm.delivery.order.consumer.PpmDeliveryOrderConsumerApplication -f consumer/pom.xml
+          # Name of the RabbitMQ container created by GitHub Actions
+          RABBIT_CONTAINER=$(docker ps --filter "ancestor=rabbitmq:3-management" --format "{{.ID}}")
+          
+          echo "Waiting for RabbitMQ to start..."
+          for i in {1..30}; do
+            if docker exec $RABBIT_CONTAINER rabbitmq-diagnostics -q ping; then
+              echo "RabbitMQ is ready!"
+              break
+            fi
+            sleep 1
+          done
+          
+          # Start Spring Boot in background and redirect logs to file
+          mvn spring-boot:run -Dspring-boot.run.main-class=com.ppm.delivery.order.consumer.PpmDeliveryOrderConsumerApplication > spring-boot.log 2>&1 &
+          SPRING_PID=$!
+          echo "Waiting for Spring Boot to start..."
+          
+          # Wait until port 8080 is open (max 30 seconds)
+          for i in {1..30}; do
+            if nc -z localhost 8080; then
+              echo "Spring Boot is up!"
+              break
+            fi
+            sleep 1
+          done
+          
+          # If port 8080 is not open after 30 seconds, show logs and fail the job
+          if ! nc -z localhost 8080; then
+            echo -e "\e[31mSpring Boot failed to start in 30 seconds\e[0m"
+            echo "==== Spring Boot logs ===="
+            # Highlight errors in red, warnings in yellow
+            sed -e 's/.*ERROR.*/\x1b[31m&\x1b[0m/' \
+                -e 's/.*WARN.*/\x1b[33m&\x1b[0m/' spring-boot.log
+            kill $SPRING_PID
+            exit 1
+          fi
+          
+          # Display logs even if startup succeeded, with colors
+          echo "==== Spring Boot logs ===="
+          sed -e 's/.*ERROR.*/\x1b[31m&\x1b[0m/' \
+              -e 's/.*WARN.*/\x1b[33m&\x1b[0m/' spring-boot.log
+          
+          # Kill the Spring Boot process
+          kill $SPRING_PID
+        shell: bash
