@@ -1,0 +1,9 @@
+server:
+  port: 8082
+
+spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST:rabbitmq} # se não passar RABBITMQ_HOST, usa "rabbitmq"
+    port: 5672
+    username: guest
+    password: guest
