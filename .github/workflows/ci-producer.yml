@@ -34,7 +34,7 @@ jobs:
         run: mvn -B test
 
       - name: Run Docker Compose
-        run: docker-compose up -d
+        run: docker compose up -d
         working-directory: .
 
       - name: Validate Spring Boot startup
