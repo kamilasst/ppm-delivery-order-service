@@ -76,7 +76,7 @@ jobs:
           # If port 8080 is not open after 30 seconds, show logs and fail the job
           if ! nc -z localhost 8080; then
             echo -e "\e[31mSpring Boot failed to start in 30 seconds\e[0m"
-            echo "==== Spring Boot logs ===="
+            echo "===== Spring Boot logs ====="
             # Highlight errors in red, warnings in yellow
             sed -e 's/.*ERROR.*/\x1b[31m&\x1b[0m/' \
                 -e 's/.*WARN.*/\x1b[33m&\x1b[0m/' spring-boot.log
@@ -85,7 +85,7 @@ jobs:
           fi
           
           # Display logs even if startup succeeded, with colors
-          echo "==== Spring Boot logs ===="
+          echo "===== Spring Boot logs ====="
           sed -e 's/.*ERROR.*/\x1b[31m&\x1b[0m/' \
               -e 's/.*WARN.*/\x1b[33m&\x1b[0m/' spring-boot.log
           
