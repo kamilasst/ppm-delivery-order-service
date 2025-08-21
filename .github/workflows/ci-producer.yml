@@ -53,39 +53,40 @@ jobs:
           RABBIT_CONTAINER=$(docker ps --filter "ancestor=rabbitmq:3-management" --format "{{.ID}}")
 
           echo "Waiting for RabbitMQ to start..."
-          for i in {1..30}; do
+          for i in {1..60}; do
             if docker exec $RABBIT_CONTAINER rabbitmq-diagnostics -q ping >/dev/null 2>&1; then
               echo "RabbitMQ is ready!"
               break
             fi
-            sleep 5
+            sleep 2
           done
 
           echo "Starting Spring Boot Producer..."
           mvn spring-boot:run -Dspring-boot.run.main-class=com.ppm.delivery.order.producer.PpmDeliveryOrderProducerApplication > spring-boot.log 2>&1 &
           SPRING_PID=$!
 
-          echo "Waiting for Spring Boot to open port 8080 (max 60s)..."
+          echo "Waiting for Spring Boot to open port 8080..."
           for i in {1..60}; do
             if nc -z localhost 8080; then
-              echo "Spring Boot is up and running!"
+              echo "Spring Boot is up!"
               break
             fi
             sleep 1
           done
 
           if ! nc -z localhost 8080; then
-            echo -e "\e[31mSpring Boot failed to start within 60 seconds\e[0m"
-            echo "===== Last 100 lines of Spring Boot logs ====="
-            tail -n 100 spring-boot.log
+            echo -e "\e[31mSpring Boot failed to start in 60 seconds\e[0m"
+            echo "===== Spring Boot logs ====="
+            cat spring-boot.log
             kill $SPRING_PID || true
             exit 1
           fi
 
-          echo "===== Last 50 lines of Spring Boot logs ====="
-          tail -n 50 spring-boot.log
+          echo "===== Spring Boot logs ====="
+          cat spring-boot.log
 
           kill $SPRING_PID || true
         shell: bash
+
 
 
