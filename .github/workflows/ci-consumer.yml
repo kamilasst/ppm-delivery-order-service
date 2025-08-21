@@ -8,6 +8,10 @@ on:
 jobs:
   build-consumer:
     runs-on: ubuntu-latest
+    container:
+      image: maven:3.9.3-eclipse-temurin-17
+      env:
+        RABBITMQ_HOST: rabbitmq
 
     services:
       rabbitmq:
