@@ -49,42 +49,43 @@ jobs:
         run: |
           set -e
 
-          # Name of the RabbitMQ container created by GitHub Actions
+          # Get RabbitMQ container ID
           RABBIT_CONTAINER=$(docker ps --filter "ancestor=rabbitmq:3-management" --format "{{.ID}}")
 
           echo "Waiting for RabbitMQ to start..."
           for i in {1..30}; do
-           if docker exec $RABBIT_CONTAINER rabbitmq-diagnostics -q ping >/dev/null 2>&1 || true; then
-             echo "RabbitMQ is ready!"
-             break
-           fi
-           sleep 5
+            if docker exec $RABBIT_CONTAINER rabbitmq-diagnostics -q ping >/dev/null 2>&1; then
+              echo "RabbitMQ is ready!"
+              break
+            fi
+            sleep 5
           done
 
-          echo "Starting Spring Boot..."
+          echo "Starting Spring Boot Producer..."
           mvn spring-boot:run -Dspring-boot.run.main-class=com.ppm.delivery.order.producer.PpmDeliveryOrderProducerApplication > spring-boot.log 2>&1 &
           SPRING_PID=$!
 
-          echo "Waiting for Spring Boot to open port 8080..."
-          for i in {1..30}; do
-           if nc -z localhost 8080; then
-             echo "Spring Boot is up!"
-             break
-           fi
-           sleep 1
+          echo "Waiting for Spring Boot to open port 8080 (max 60s)..."
+          for i in {1..60}; do
+            if nc -z localhost 8080; then
+              echo "Spring Boot is up and running!"
+              break
+            fi
+            sleep 1
           done
 
           if ! nc -z localhost 8080; then
-           echo -e "\e[31mSpring Boot failed to start in 30 seconds\e[0m"
-           echo "===== Spring Boot logs ====="
-           grep -E "ERROR|WARN" spring-boot.log || cat spring-boot.log
-           kill $SPRING_PID
-           exit 1
+            echo -e "\e[31mSpring Boot failed to start within 60 seconds\e[0m"
+            echo "===== Last 100 lines of Spring Boot logs ====="
+            tail -n 100 spring-boot.log
+            kill $SPRING_PID || true
+            exit 1
           fi
 
-          echo "===== Spring Boot logs ====="
-          grep -E "ERROR|WARN" spring-boot.log || cat spring-boot.log
+          echo "===== Last 50 lines of Spring Boot logs ====="
+          tail -n 50 spring-boot.log
 
-          kill $SPRING_PID
+          kill $SPRING_PID || true
         shell: bash
+
 
