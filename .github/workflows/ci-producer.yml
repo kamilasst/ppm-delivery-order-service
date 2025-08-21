@@ -64,17 +64,17 @@ jobs:
           SPRING_PID=$!
           echo "Waiting for Spring Boot to start..."
 
-          # Wait until port 8080 is open (max 30 seconds)
+          # Wait until port 8081 is open (max 30 seconds)
           for i in {1..30}; do
-            if nc -z localhost 8080; then
+            if nc -z localhost 8081; then
               echo "Spring Boot is up!"
               break
             fi
             sleep 1
           done
 
-          # If port 8080 is not open after 30 seconds, show logs and fail the job
-          if ! nc -z localhost 8080; then
+          # If port 8081 is not open after 30 seconds, show logs and fail the job
+          if ! nc -z localhost 8081; then
             echo -e "\e[31mSpring Boot failed to start in 30 seconds\e[0m"
             echo "==== Spring Boot logs ===="
             # Highlight errors in red, warnings in yellow
