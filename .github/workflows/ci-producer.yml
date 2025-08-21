@@ -9,18 +9,6 @@ jobs:
   build-producer:
     runs-on: ubuntu-latest
 
-    services:
-      rabbitmq:
-        image: rabbitmq:3-management
-        ports:
-          - 5672:5672
-          - 15672:15672
-        options: >-
-          --health-cmd="rabbitmq-diagnostics -q ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -45,26 +33,18 @@ jobs:
       - name: Run unit tests
         run: mvn -B test
 
+      - name: Run Docker Compose
+        run: docker-compose up -d
+        working-directory: .
+
       - name: Validate Spring Boot startup
         run: |
-          # Name of the RabbitMQ container created by GitHub Actions
-          RABBIT_CONTAINER=$(docker ps --filter "ancestor=rabbitmq:3-management" --format "{{.ID}}")
-
-          echo "Waiting for RabbitMQ to start..."
-          for i in {1..30}; do
-            if docker exec $RABBIT_CONTAINER rabbitmq-diagnostics -q ping; then
-              echo "RabbitMQ is ready!"
-              break
-            fi
-            sleep 1
-          done
-
-          # Start Spring Boot in background and redirect logs to file
+          echo "Starting Spring Boot..."
+          
           mvn spring-boot:run > spring-boot.log 2>&1 &
           SPRING_PID=$!
           echo "Waiting for Spring Boot to start..."
 
-          # Wait until port 8081 is open (max 30 seconds)
           for i in {1..30}; do
             if nc -z localhost 8081; then
               echo "Spring Boot is up!"
@@ -72,24 +52,20 @@ jobs:
             fi
             sleep 1
           done
-
-          # If port 8081 is not open after 30 seconds, show logs and fail the job
+    
           if ! nc -z localhost 8081; then
             echo -e "\e[31mSpring Boot failed to start in 30 seconds\e[0m"
-            echo "==== Spring Boot logs ===="
-            # Highlight errors in red, warnings in yellow
+            echo "==== Spring Boot logs ===="        
             sed -e 's/.*ERROR.*/\x1b[31m&\x1b[0m/' \
                 -e 's/.*WARN.*/\x1b[33m&\x1b[0m/' spring-boot.log
             kill $SPRING_PID
             exit 1
           fi
-
-          # Display logs even if startup succeeded, with colors
+         
           echo "==== Spring Boot logs ===="
           sed -e 's/.*ERROR.*/\x1b[31m&\x1b[0m/' \
               -e 's/.*WARN.*/\x1b[33m&\x1b[0m/' spring-boot.log
 
-          # Kill the Spring Boot process
           kill $SPRING_PID
         shell: bash
         working-directory: ./producer
