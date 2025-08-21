@@ -8,13 +8,13 @@ on:
 jobs:
   build-producer:
     runs-on: ubuntu-latest
+    container:
+      image: maven:3.9.3-eclipse-temurin-17
+      options: --network host
 
     services:
       rabbitmq:
         image: rabbitmq:3-management
-        ports:
-          - 5672:5672
-          - 15672:15672
         options: >-
           --health-cmd="rabbitmq-diagnostics -q ping"
           --health-interval=10s
@@ -25,13 +25,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Maven dependency cache
+      - name: Set up Maven cache
         uses: actions/cache@v4
         with:
           path: ~/.m2/repository
@@ -48,17 +42,13 @@ jobs:
       - name: Validate Spring Boot startup
         run: |
           set -e
-
-          # Get RabbitMQ container ID
-          RABBIT_CONTAINER=$(docker ps --filter "ancestor=rabbitmq:3-management" --format "{{.ID}}")
-
-          echo "Waiting for RabbitMQ to start..."
-          for i in {1..60}; do
-            if docker exec $RABBIT_CONTAINER rabbitmq-diagnostics -q ping >/dev/null 2>&1; then
+          echo "Waiting for RabbitMQ to be ready..."
+          for i in {1..30}; do
+            if docker exec $(docker ps --filter "ancestor=rabbitmq:3-management" --format "{{.ID}}") rabbitmq-diagnostics -q ping >/dev/null 2>&1 || true; then
               echo "RabbitMQ is ready!"
               break
             fi
-            sleep 2
+            sleep 5
           done
 
           echo "Starting Spring Boot Producer..."
@@ -66,7 +56,7 @@ jobs:
           SPRING_PID=$!
 
           echo "Waiting for Spring Boot to open port 8080..."
-          for i in {1..60}; do
+          for i in {1..30}; do
             if nc -z localhost 8080; then
               echo "Spring Boot is up!"
               break
@@ -75,16 +65,15 @@ jobs:
           done
 
           if ! nc -z localhost 8080; then
-            echo -e "\e[31mSpring Boot failed to start in 60 seconds\e[0m"
+            echo -e "\e[31mSpring Boot failed to start in 30 seconds\e[0m"
             echo "===== Spring Boot logs ====="
-            cat spring-boot.log
+            grep -E "ERROR|WARN" spring-boot.log || cat spring-boot.log
             kill $SPRING_PID || true
             exit 1
           fi
 
           echo "===== Spring Boot logs ====="
-          cat spring-boot.log
-
+          grep -E "ERROR|WARN" spring-boot.log || cat spring-boot.log
           kill $SPRING_PID || true
         shell: bash
 
