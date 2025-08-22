@@ -40,6 +40,7 @@ jobs:
       - name: Validate Spring Boot startup
         run: |
           echo "Starting Spring Boot..."
+          sleep 10
           
           mvn spring-boot:run > spring-boot.log 2>&1 &
           SPRING_PID=$!
