@@ -2,6 +2,7 @@ package com.ppm.delivery.order.consumer.message.listener;
 
 import com.ppm.delivery.order.consumer.message.constants.HeaderConstants;
 import com.ppm.delivery.order.consumer.context.ContextHolder;
+import com.ppm.delivery.order.consumer.message.domain.OrderMessage;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -16,12 +17,13 @@ public class OrderCreateListener {
         this.contextHolder = contextHolder;
     }
 
-    @RabbitListener(queues = "#{@rabbitConfig.queueNames()}")
+    @RabbitListener(queues = "#{@rabbitConfig.queueNames()}",
+                    containerFactory = "simpleContainerFactory")
     public void receiveMessage(@Header("amqp_receivedRoutingKey") String routingKey,
                                @Header(value = HeaderConstants.HEADER_COUNTRY) final String country,
                                @Header(value = HeaderConstants.HEADER_CORRELATION_ID) final String correlationId,
                                @Header(value = HeaderConstants.HEADER_X_TIMESTAMP) final Long timestamp,
-                               @Payload final String message) {
+                               @Payload final OrderMessage message) {
 
         contextHolder.initializeContextValues(country, correlationId, timestamp);
 

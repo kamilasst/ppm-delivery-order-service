@@ -1,6 +1,6 @@
 package com.ppm.delivery.order.producer.api.domain.request;
 
-import com.ppm.delivery.order.producer.domain.enums.PriceType;
+import com.ppm.delivery.order.producer.api.domain.request.enums.PriceType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

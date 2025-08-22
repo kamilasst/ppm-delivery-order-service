@@ -1,6 +1,6 @@
-package com.ppm.delivery.order.producer.api.domain.request;
+package com.ppm.delivery.order.consumer.message.domain;
 
-import com.ppm.delivery.order.producer.api.domain.request.enums.PackageType;
+import com.ppm.delivery.order.consumer.domain.enums.PackageType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PackageInfoRequest {
+public class PackageInfoMessage {
 
     @NotNull
     private Integer itemCount;

@@ -1,4 +1,4 @@
-package com.ppm.delivery.order.producer.domain.enums;
+package com.ppm.delivery.order.producer.api.domain.request.enums;
 
 public enum ItemCategory {
 

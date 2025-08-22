@@ -7,8 +7,11 @@ import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.boot.autoconfigure.amqp.SimpleRabbitListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,6 +29,23 @@ public class RabbitConfig {
     public RabbitConfig(ApplicationProperties applicationProperties, MessageApplicationProperties messageApplicationProperties){
         this.applicationProperties = applicationProperties;
         this.messageApplicationProperties = messageApplicationProperties;
+    }
+
+    @Bean
+    public Jackson2JsonMessageConverter jackson2JsonMessageConverter() {
+        return new Jackson2JsonMessageConverter();
+    }
+
+    @Bean
+    public SimpleRabbitListenerContainerFactory simpleContainerFactory(
+            final ConnectionFactory connectionFactory,
+            final SimpleRabbitListenerContainerFactoryConfigurer configurer,
+            final Jackson2JsonMessageConverter jackson2JsonMessageConverter) {
+
+        final var factory = new SimpleRabbitListenerContainerFactory();
+        configurer.configure(factory, connectionFactory);
+        factory.setMessageConverter(jackson2JsonMessageConverter);
+        return factory;
     }
 
     @Bean

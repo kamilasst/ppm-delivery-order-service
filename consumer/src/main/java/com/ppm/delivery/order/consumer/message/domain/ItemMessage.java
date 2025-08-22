@@ -1,7 +1,7 @@
-package com.ppm.delivery.order.producer.api.domain.request;
+package com.ppm.delivery.order.consumer.message.domain;
 
-import com.ppm.delivery.order.producer.api.domain.request.enums.ItemCategory;
-import com.ppm.delivery.order.producer.api.domain.request.enums.ItemTemperature;
+import com.ppm.delivery.order.consumer.domain.enums.ItemCategory;
+import com.ppm.delivery.order.consumer.domain.enums.ItemTemperature;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +16,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemRequest {
+public class ItemMessage {
 
     @NotBlank
     private String id;
@@ -41,9 +41,9 @@ public class ItemRequest {
 
     @NotNull
     @Valid
-    private PackageInfoRequest packageInfo;
+    private PackageInfoMessage packageInfo;
 
     @NotNull
     @Valid
-    private List<@Valid PriceRequest> price;
+    private List<@Valid PriceMessage> price;
 }
