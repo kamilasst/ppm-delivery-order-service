@@ -1,7 +1,7 @@
-package com.ppm.delivery.order.producer.api.domain.request;
+package com.ppm.delivery.order.consumer.message.domain;
 
-import com.ppm.delivery.order.producer.api.domain.request.enums.DiscountType;
-import com.ppm.delivery.order.producer.api.domain.request.enums.PaymentMethod;
+import com.ppm.delivery.order.consumer.domain.enums.DiscountType;
+import com.ppm.delivery.order.consumer.domain.enums.PaymentMethod;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaymentRequest {
+public class PaymentMessage {
 
     @NotNull
     private PaymentMethod method;
@@ -38,5 +38,5 @@ public class PaymentRequest {
 
     @NotNull
     @Valid
-    private List<@Valid TaxRequest> taxes;
+    private List<@Valid TaxMessage> taxes;
 }

@@ -1,6 +1,6 @@
-package com.ppm.delivery.order.producer.api.domain.request;
+package com.ppm.delivery.order.consumer.message.domain;
 
-import com.ppm.delivery.order.producer.api.domain.request.enums.DiscountType;
+import com.ppm.delivery.order.consumer.domain.enums.PriceType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -14,14 +14,20 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CupomRequest {
+public class PriceMessage {
 
     @NotBlank
-    private String code;
+    private String id;
 
     @NotNull
-    private BigDecimal discount;
+    private PriceType type;
 
     @NotNull
-    private DiscountType discountType;
+    private BigDecimal price;
+
+    @NotNull
+    private BigDecimal total;
+
+    @NotNull
+    private BigDecimal discountAmount;
 }

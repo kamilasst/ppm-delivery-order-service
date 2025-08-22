@@ -1,6 +1,6 @@
-package com.ppm.delivery.order.producer.api.domain.request;
+package com.ppm.delivery.order.consumer.message.domain;
 
-import com.ppm.delivery.order.producer.api.domain.request.enums.DiscountType;
+import com.ppm.delivery.order.consumer.domain.enums.DiscountType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CupomRequest {
+public class CupomMessage {
 
     @NotBlank
     private String code;

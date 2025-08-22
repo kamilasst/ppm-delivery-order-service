@@ -1,6 +1,7 @@
-package com.ppm.delivery.order.producer.api.domain.request;
+package com.ppm.delivery.order.consumer.message.domain;
 
-import com.ppm.delivery.order.producer.api.domain.request.enums.Status;
+
+import com.ppm.delivery.order.consumer.domain.enums.Status;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +17,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderRequest {
+public class OrderMessage {
 
     @NotBlank
     private String code;
@@ -29,20 +30,20 @@ public class OrderRequest {
 
     @NotNull
     @Valid
-    private CustomerInfoRequest customerInfo;
+    private CustomerInfoMessage customerInfo;
 
     @NotNull
     @Valid
-    private DeliveryInfoRequest deliveryInfo;
+    private DeliveryInfoMessage deliveryInfo;
 
     @NotNull
     @Valid
-    private List<@Valid ItemRequest> items;
+    private List<@Valid ItemMessage> items;
 
     @NotNull
     @Valid
-    private PaymentRequest payment;
+    private PaymentMessage payment;
 
     @Valid
-    private CupomRequest cupom;
+    private CupomMessage cupom;
 }
