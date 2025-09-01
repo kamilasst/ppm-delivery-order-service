@@ -8,6 +8,12 @@ spring:
     username: guest
     password: guest
 
+  data:
+    mongodb:
+      uri: mongodb://root:example@localhost:27017/${spring.data.mongodb.database}?authSource=admin
+      database: database-order
+      collectionName: Order
+
 app:
   supportedCountries:
     - AR
@@ -20,5 +26,7 @@ app:
 message:
   rabbitmq:
     domain: order
-    actions: create, update
+    actions:
+      - create
+      - update
     exchange: order.command.exchange
