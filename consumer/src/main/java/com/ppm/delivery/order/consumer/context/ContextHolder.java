@@ -20,7 +20,7 @@ public class ContextHolder {
         contextHolder.set(context);
     }
 
-    public Map<String, String> getContext() {
+    private Map<String, String> getContext() {
         return contextHolder.get();
     }
 
@@ -28,6 +28,14 @@ public class ContextHolder {
         setCountry(country);
         setCorrelationId(requestTraceId);
         setTimestamp(timestamp);
+    }
+
+    public String getCountry(){
+        return getContext().get(COUNTRY);
+    }
+
+    public void clear() {
+        contextHolder.remove();
     }
 
     private void setCountry(final String country) {
@@ -48,7 +56,4 @@ public class ContextHolder {
         }
     }
 
-    public void clear() {
-        contextHolder.remove();
-    }
 }
