@@ -32,6 +32,11 @@ public class OrderCreateListener {
 
         contextHolder.initializeContextValues(country, correlationId, timestamp);
 
+
+        // TODO atg - Review code sprint 15 - Vamos começar a indrucao a logs e monitoramento, entao remova o try/catch e os system.outs e
+        // adicione logs apropriados, adicione a dependencia do import org.slf4j.Logger; no pom.xml do parent(pois será usado no producer e consumer
+        // Depois importe no inicio da classe adicione: private static final Logger logger = LoggerFactory.getLogger(UsuarioController.class);
+        // em seguida só usar exemplo: logger.info("Starting process for order: {}", message.getCode()); // Criar constant LogConstants
         try {
             orderService.createOrder(message);
 

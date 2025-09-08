@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+// TODO atg - Review code sprint 15 - Avalie renomear para SenderOrderMessageService pois ele será responsável
+//  exclusivamente por mensagens de order
 @Service
 public class SenderMessageService implements ISenderMessageService{
 

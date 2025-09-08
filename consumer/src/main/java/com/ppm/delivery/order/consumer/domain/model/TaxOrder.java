@@ -7,6 +7,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
+// TODO atg - Review code sprint 15 - Por favor avalie renomear todas as classses de domain model que terminam com Order
+//  pois como vc já está no package order, o sufixo Order fica redundante. Exemplo: TaxOrder -> Tax, PriceOrder -> Price, ItemOrder -> Item, etc.
 @Getter
 @Setter
 @NoArgsConstructor

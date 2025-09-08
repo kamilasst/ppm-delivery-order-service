@@ -12,6 +12,7 @@ public class OrderService implements IOrderService{
         this.senderMessageService = senderMessageService;
     }
 
+    // TODO atg - Review code sprint 15 - Avalie renomear para sendCreate pois como vc já está no service de order, o createOrder fica redundante
     @Override
     public void sendCreateOrderMessage(OrderRequest request){
         senderMessageService.sendCreateOrderMessage(request);
