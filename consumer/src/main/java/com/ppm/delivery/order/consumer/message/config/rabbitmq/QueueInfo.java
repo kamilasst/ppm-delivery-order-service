@@ -1,4 +1,4 @@
-package com.ppm.delivery.order.consumer.message.config;
+package com.ppm.delivery.order.consumer.message.config.rabbitmq;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

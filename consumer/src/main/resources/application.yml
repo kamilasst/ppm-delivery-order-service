@@ -30,3 +30,4 @@ message:
       - create
       - update
     exchange: order.command.exchange
+    dlqExchange: order.command.exchange.dlq

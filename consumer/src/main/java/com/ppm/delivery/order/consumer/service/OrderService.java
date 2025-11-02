@@ -27,10 +27,12 @@ public class OrderService implements IOrderService{
 
     @Override
     public void createOrder(OrderMessage message){
-        Order order = orderMapper.toEntity(message);
-        order.setAudit(new AuditOrder(LocalDateTime.now()));
-        orderRepository.save(contextHolder.getCountry(), order);
 
+        // TODO atg
+        throw new IllegalArgumentException("erro generico");
+
+//        Order order = orderMapper.toEntity(message);
+//        order.setAudit(new AuditOrder(LocalDateTime.now()));
+//        orderRepository.save(contextHolder.getCountry(), order);
     }
-
 }

@@ -1,7 +1,7 @@
 package com.ppm.delivery.order.consumer.config;
 
-import com.ppm.delivery.order.consumer.message.config.QueueInfo;
-import com.ppm.delivery.order.consumer.message.config.RabbitConfig;
+import com.ppm.delivery.order.consumer.message.config.rabbitmq.QueueInfo;
+import com.ppm.delivery.order.consumer.message.config.rabbitmq.RabbitConfig;
 import com.ppm.delivery.order.consumer.properties.MessageApplicationProperties;
 import com.ppm.delivery.order.consumer.properties.ApplicationProperties;
 import org.junit.jupiter.api.BeforeEach;

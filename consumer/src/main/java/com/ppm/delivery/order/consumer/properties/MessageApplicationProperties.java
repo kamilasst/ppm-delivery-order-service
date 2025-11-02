@@ -17,4 +17,5 @@ public class MessageApplicationProperties {
     private String domain;
     private List<String> actions = new ArrayList<>();
     private String exchange;
+    private String dlqExchange;
 }
