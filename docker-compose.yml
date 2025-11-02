@@ -17,7 +17,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
-      MONGO_INITDB_DATABASE: orders_db
+      MONGO_INITDB_DATABASE: database-order
     volumes:
       - mongo_data:/data/db
 

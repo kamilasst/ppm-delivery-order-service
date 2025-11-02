@@ -1,4 +1,4 @@
-package com.ppm.delivery.order.consumer.message.config;
+package com.ppm.delivery.order.consumer.message.config.mongo;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
